@@ -31,7 +31,7 @@ const (
 func (m *metadataManager) serveProxy(conn net.Conn, mp MetaPartition,
 	p *Packet) (ok bool) {
 	var (
-		mConn      *net.TCPConn
+		mConn      net.Conn
 		leaderAddr string
 		err        error
 		reqID      = p.ReqID

@@ -698,7 +698,7 @@ func (dp *DataPartition) doStreamFixTinyDeleteRecord(repairTask *DataPartitionRe
 	var (
 		localTinyDeleteFileSize int64
 		err                     error
-		conn                    *net.TCPConn
+		conn                    net.Conn
 	)
 
 	if localTinyDeleteFileSize, err = dp.extentStore.LoadTinyDeleteFileOffset(); err != nil {

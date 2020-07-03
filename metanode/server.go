@@ -15,6 +15,7 @@
 package metanode
 
 import (
+	"github.com/chubaofs/chubaofs/util"
 	"io"
 	"net"
 
@@ -62,10 +63,11 @@ func (m *MetaNode) stopServer() {
 
 // Read data from the specified tcp connection until the connection is closed by the remote or the tcp service is down.
 func (m *MetaNode) serveConn(conn net.Conn, stopC chan uint8) {
+	c, ok := util.PrePareConnect(conn)
+	if !ok {
+		return
+	}
 	defer conn.Close()
-	c := conn.(*net.TCPConn)
-	c.SetKeepAlive(true)
-	c.SetNoDelay(true)
 	remoteAddr := conn.RemoteAddr().String()
 	for {
 		select {
@@ -74,13 +76,13 @@ func (m *MetaNode) serveConn(conn net.Conn, stopC chan uint8) {
 		default:
 		}
 		p := &Packet{}
-		if err := p.ReadFromConn(conn, proto.NoReadDeadlineTime); err != nil {
+		if err := p.ReadFromConn(c, proto.NoReadDeadlineTime); err != nil {
 			if err != io.EOF {
 				log.LogError("serve MetaNode: ", err.Error())
 			}
 			return
 		}
-		if err := m.handlePacket(conn, p, remoteAddr); err != nil {
+		if err := m.handlePacket(c, p, remoteAddr); err != nil {
 			log.LogErrorf("serve handlePacket fail: %v", err)
 		}
 	}

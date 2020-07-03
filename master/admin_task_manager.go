@@ -16,12 +16,12 @@ package master
 
 import (
 	"encoding/json"
+	"github.com/chubaofs/chubaofs/util"
 	"sync"
 	"time"
 
 	"fmt"
 	"github.com/chubaofs/chubaofs/proto"
-	"github.com/chubaofs/chubaofs/util"
 	"github.com/chubaofs/chubaofs/util/errors"
 	"github.com/chubaofs/chubaofs/util/log"
 	"net"
@@ -113,21 +113,15 @@ func (sender *AdminTaskManager) doSendTasks() {
 	sender.sendTasks(tasks)
 }
 
-func (sender *AdminTaskManager) getConn() (conn *net.TCPConn, err error) {
+func (sender *AdminTaskManager) getConn() (conn net.Conn, err error) {
 	if useConnPool {
 		return sender.connPool.GetConnect(sender.targetAddr)
 	}
-	var connect net.Conn
-	connect, err = net.Dial("tcp", sender.targetAddr)
-	if err == nil {
-		conn = connect.(*net.TCPConn)
-		conn.SetKeepAlive(true)
-		conn.SetNoDelay(true)
-	}
+	conn, err = util.DailTimeOut(sender.targetAddr, time.Second)
 	return
 }
 
-func (sender *AdminTaskManager) putConn(conn *net.TCPConn, forceClose bool) {
+func (sender *AdminTaskManager) putConn(conn net.Conn, forceClose bool) {
 	if useConnPool {
 		sender.connPool.PutConnect(conn, forceClose)
 	}

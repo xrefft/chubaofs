@@ -33,7 +33,7 @@ const (
 )
 
 type MetaConn struct {
-	conn *net.TCPConn
+	conn net.Conn
 	id   uint64 //PartitionID
 	addr string //MetaNode addr
 }

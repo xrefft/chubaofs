@@ -59,7 +59,7 @@ func (reader *ExtentReader) Read(req *ExtentRequest) (readBytes int, err error) 
 
 	log.LogDebugf("ExtentReader Read enter: size(%v) req(%v) reqPacket(%v)", size, req, reqPacket)
 
-	err = sc.Send(reqPacket, func(conn *net.TCPConn) (error, bool) {
+	err = sc.Send(reqPacket, func(conn net.Conn) (error, bool) {
 		readBytes = 0
 		for readBytes < size {
 			replyPacket := NewReply(reqPacket.ReqID, reader.dp.PartitionID, reqPacket.ExtentID)

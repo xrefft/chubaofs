@@ -92,13 +92,11 @@ func (mds *MockDataServer) start() {
 }
 
 func (mds *MockDataServer) serveConn(rc net.Conn) {
-	conn, ok := rc.(*net.TCPConn)
+	conn, ok := util.PrePareConnect(rc)
 	if !ok {
 		rc.Close()
 		return
 	}
-	conn.SetKeepAlive(true)
-	conn.SetNoDelay(true)
 	req := proto.NewPacket()
 	err := req.ReadFromConn(conn, proto.NoReadDeadlineTime)
 	if err != nil {

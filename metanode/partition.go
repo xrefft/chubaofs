@@ -17,6 +17,7 @@ package metanode
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/chubaofs/chubaofs/util"
 	"sort"
 	"strconv"
 	"strings"
@@ -30,7 +31,6 @@ import (
 	"github.com/chubaofs/chubaofs/cmd/common"
 	"github.com/chubaofs/chubaofs/proto"
 	"github.com/chubaofs/chubaofs/raftstore"
-	"github.com/chubaofs/chubaofs/util"
 	"github.com/chubaofs/chubaofs/util/errors"
 	"github.com/chubaofs/chubaofs/util/log"
 	raftproto "github.com/tiglabs/raft/proto"

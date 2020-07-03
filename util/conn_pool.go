@@ -21,7 +21,7 @@ import (
 )
 
 type Object struct {
-	conn *net.TCPConn
+	conn net.Conn
 	idle int64
 }
 
@@ -52,19 +52,27 @@ func NewConnectPool() (cp *ConnectPool) {
 	return cp
 }
 
-func DailTimeOut(target string, timeout time.Duration) (c *net.TCPConn, err error) {
-	var connect net.Conn
-	connect, err = net.DialTimeout("tcp", target, timeout)
+func PrePareConnect(rc net.Conn) (tcpConn *net.TCPConn, ok bool) {
+	tcpConn, ok = rc.(*net.TCPConn)
+	if !ok {
+		return
+	}
+	tcpConn.SetLinger(0)
+	tcpConn.SetKeepAlive(true)
+	tcpConn.SetNoDelay(true)
+	return
+}
+
+func DailTimeOut(target string, timeout time.Duration) (c net.Conn, err error) {
+	connect, err := net.DialTimeout("tcp", target, timeout)
 	if err == nil {
-		conn := connect.(*net.TCPConn)
-		conn.SetKeepAlive(true)
-		conn.SetNoDelay(true)
-		c = conn
+		c, _ = PrePareConnect(connect)
+		return c, nil
 	}
 	return
 }
 
-func (cp *ConnectPool) GetConnect(targetAddr string) (c *net.TCPConn, err error) {
+func (cp *ConnectPool) GetConnect(targetAddr string) (c net.Conn, err error) {
 	cp.RLock()
 	pool, ok := cp.pools[targetAddr]
 	cp.RUnlock()
@@ -81,7 +89,7 @@ func (cp *ConnectPool) GetConnect(targetAddr string) (c *net.TCPConn, err error)
 	return pool.GetConnectFromPool()
 }
 
-func (cp *ConnectPool) PutConnect(c *net.TCPConn, forceClose bool) {
+func (cp *ConnectPool) PutConnect(c net.Conn, forceClose bool) {
 	if c == nil {
 		return
 	}
@@ -224,7 +232,7 @@ func (p *Pool) ReleaseAll() {
 
 func (p *Pool) NewConnect(target string) (c *net.TCPConn, err error) {
 	var connect net.Conn
-	connect, err = net.DialTimeout("tcp", p.target,time.Second)
+	connect, err = net.DialTimeout("tcp", p.target, time.Second)
 	if err == nil {
 		conn := connect.(*net.TCPConn)
 		conn.SetKeepAlive(true)
@@ -234,7 +242,7 @@ func (p *Pool) NewConnect(target string) (c *net.TCPConn, err error) {
 	return
 }
 
-func (p *Pool) GetConnectFromPool() (c *net.TCPConn, err error) {
+func (p *Pool) GetConnectFromPool() (c net.Conn, err error) {
 	var (
 		o *Object
 	)

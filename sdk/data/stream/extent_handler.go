@@ -75,7 +75,7 @@ type ExtentHandler struct {
 
 	// Allocated in the sender, and released in the receiver.
 	// Will not be changed.
-	conn *net.TCPConn
+	conn net.Conn
 	dp   *wrapper.DataPartition
 
 	// Issue a signal to this channel when *inflight* hits zero.
@@ -476,7 +476,7 @@ func (eh *ExtentHandler) discardPacket(packet *Packet) {
 func (eh *ExtentHandler) allocateExtent() (err error) {
 	var (
 		dp    *wrapper.DataPartition
-		conn  *net.TCPConn
+		conn  net.Conn
 		extID int
 	)
 
@@ -523,16 +523,8 @@ func (eh *ExtentHandler) allocateExtent() (err error) {
 	return err
 }
 
-func (eh *ExtentHandler) createConnection(dp *wrapper.DataPartition) (*net.TCPConn, error) {
-	conn, err := net.DialTimeout("tcp", dp.Hosts[0], time.Second)
-	if err != nil {
-		return nil, err
-	}
-	connect := conn.(*net.TCPConn)
-	// TODO unhandled error
-	connect.SetKeepAlive(true)
-	connect.SetNoDelay(true)
-	return connect, nil
+func (eh *ExtentHandler) createConnection(dp *wrapper.DataPartition) (net.Conn, error) {
+	return util.DailTimeOut(dp.Hosts[0], time.Second)
 }
 
 func (eh *ExtentHandler) createExtent(dp *wrapper.DataPartition) (extID int, err error) {

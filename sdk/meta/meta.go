@@ -16,6 +16,7 @@ package meta
 
 import (
 	"fmt"
+	"github.com/chubaofs/chubaofs/util"
 	"sync"
 	"syscall"
 	"time"
@@ -25,7 +26,6 @@ import (
 	"github.com/chubaofs/chubaofs/proto"
 	authSDK "github.com/chubaofs/chubaofs/sdk/auth"
 	masterSDK "github.com/chubaofs/chubaofs/sdk/master"
-	"github.com/chubaofs/chubaofs/util"
 	"github.com/chubaofs/chubaofs/util/auth"
 	"github.com/chubaofs/chubaofs/util/btree"
 	"github.com/chubaofs/chubaofs/util/errors"

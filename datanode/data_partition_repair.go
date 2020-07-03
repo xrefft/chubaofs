@@ -192,7 +192,7 @@ func (dp *DataPartition) getRemoteExtentInfo(extentType uint8, tinyExtents []uin
 		}
 		p.Size = uint32(len(p.Data))
 	}
-	var conn *net.TCPConn
+	var conn net.Conn
 	conn, err = gConnPool.GetConnect(target) // get remote connection
 	if err != nil {
 		err = errors.Trace(err, "getRemoteExtentInfo DataPartition(%v) get host(%v) connect", dp.partitionID, target)
@@ -386,7 +386,7 @@ func (dp *DataPartition) buildExtentRepairTasks(repairTasks []*DataPartitionRepa
 
 func (dp *DataPartition) notifyFollower(wg *sync.WaitGroup, index int, members []*DataPartitionRepairTask) (err error) {
 	p := repl.NewPacketToNotifyExtentRepair(dp.partitionID) // notify all the followers to repair
-	var conn *net.TCPConn
+	var conn net.Conn
 	target := dp.getReplicaAddr(index)
 	p.Data, _ = json.Marshal(members[index])
 	p.Size = uint32(len(p.Data))
@@ -468,7 +468,7 @@ func (dp *DataPartition) streamRepairExtent(remoteExtentInfo *storage.ExtentInfo
 	if storage.IsTinyExtent(remoteExtentInfo.FileID) {
 		request = repl.NewTinyExtentRepairReadPacket(dp.partitionID, remoteExtentInfo.FileID, int(localExtentInfo.Size), int(sizeDiff))
 	}
-	var conn *net.TCPConn
+	var conn net.Conn
 	conn, err = gConnPool.GetConnect(remoteExtentInfo.Source)
 	if err != nil {
 		return errors.Trace(err, "streamRepairExtent get conn from host(%v) error", remoteExtentInfo.Source)

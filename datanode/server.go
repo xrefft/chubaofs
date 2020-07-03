@@ -384,12 +384,14 @@ func (s *DataNode) stopTCPService() (err error) {
 	return
 }
 
-func (s *DataNode) serveConn(conn net.Conn) {
+func (s *DataNode) serveConn(rc net.Conn) {
 	space := s.space
 	space.Stats().AddConnection()
-	c, _ := conn.(*net.TCPConn)
-	c.SetKeepAlive(true)
-	c.SetNoDelay(true)
+	c, ok := util.PrePareConnect(rc)
+	if !ok {
+		rc.Close()
+		return
+	}
 	packetProcessor := repl.NewReplProtocol(c, s.Prepare, s.OperatePacket, s.Post)
 	packetProcessor.ServerConn()
 }

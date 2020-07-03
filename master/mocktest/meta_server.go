@@ -86,13 +86,11 @@ func (mms *MockMetaServer) start() {
 
 func (mms *MockMetaServer) serveConn(rc net.Conn) {
 	fmt.Printf("remote[%v],local[%v]\n", rc.RemoteAddr(), rc.LocalAddr())
-	conn, ok := rc.(*net.TCPConn)
+	conn, ok := util.PrePareConnect(rc)
 	if !ok {
 		rc.Close()
 		return
 	}
-	conn.SetKeepAlive(true)
-	conn.SetNoDelay(true)
 	req := proto.NewPacket()
 	err := req.ReadFromConn(conn, proto.NoReadDeadlineTime)
 	if err != nil {

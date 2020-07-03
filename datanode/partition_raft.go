@@ -563,7 +563,7 @@ func (dp *DataPartition) findMaxAppliedID(allAppliedIDs []uint64) (maxAppliedID 
 // Get the partition size from the leader.
 func (dp *DataPartition) getLeaderPartitionSize(maxExtentID uint64) (size uint64, err error) {
 	var (
-		conn *net.TCPConn
+		conn net.Conn
 	)
 
 	p := NewPacketToGetPartitionSize(dp.partitionID)
@@ -599,7 +599,7 @@ func (dp *DataPartition) getLeaderPartitionSize(maxExtentID uint64) (size uint64
 // Get the MaxExtentID partition  from the leader.
 func (dp *DataPartition) getLeaderMaxExtentIDAndPartitionSize() (maxExtentID, PartitionSize uint64, err error) {
 	var (
-		conn *net.TCPConn
+		conn net.Conn
 	)
 
 	p := NewPacketToGetMaxExtentIDAndPartitionSIze(dp.partitionID)
@@ -646,7 +646,7 @@ func (dp *DataPartition) broadcastMinAppliedID(minAppliedID uint64) (err error) 
 			continue
 		}
 		target := dp.getReplicaAddr(i)
-		var conn *net.TCPConn
+		var conn net.Conn
 		conn, err = gConnPool.GetConnect(target)
 		if err != nil {
 			return
@@ -701,7 +701,7 @@ func (dp *DataPartition) getAllReplicaAppliedID() (allAppliedID []uint64, replyN
 
 // Get target members' applied id
 func (dp *DataPartition) getRemoteAppliedID(target string, p *repl.Packet) (appliedID uint64, err error) {
-	var conn *net.TCPConn
+	var conn net.Conn
 	start := time.Now().UnixNano()
 	defer func() {
 		if err != nil {

@@ -18,6 +18,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"fmt"
+	"github.com/tiglabs/raft/util"
 	"io"
 	"net"
 	"sync/atomic"
@@ -347,13 +348,12 @@ func (mp *metaPartition) HandleFatalEvent(err *raft.FatalError) {
 func (mp *metaPartition) HandleLeaderChange(leader uint64) {
 	exporter.Warning(fmt.Sprintf("metaPartition(%v) changeLeader to (%v)", mp.config.PartitionId, leader))
 	if mp.config.NodeId == leader {
-		conn, err := net.DialTimeout("tcp", net.JoinHostPort("127.0.0.1", serverPort), time.Second)
+		conn, err := util.DialTimeout(net.JoinHostPort("127.0.0.1", serverPort), time.Second)
 		if err != nil {
 			log.LogErrorf(fmt.Sprintf("HandleLeaderChange serverPort not exsit ,error %v", err))
 			go mp.raftPartition.TryToLeader(mp.config.PartitionId)
 			return
 		}
-		conn.(*net.TCPConn).SetLinger(0)
 		conn.Close()
 	}
 	if mp.config.NodeId != leader {

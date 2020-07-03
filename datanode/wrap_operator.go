@@ -37,7 +37,7 @@ import (
 	raftProto "github.com/tiglabs/raft/proto"
 )
 
-func (s *DataNode) OperatePacket(p *repl.Packet, c *net.TCPConn) (err error) {
+func (s *DataNode) OperatePacket(p *repl.Packet, c net.Conn) (err error) {
 	sz := p.Size
 	tpObject := exporter.NewTPCnt(p.GetOpMsg())
 	start := time.Now().UnixNano()
@@ -664,7 +664,7 @@ func (s *DataNode) handleTinyExtentRepairRead(request *repl.Packet, connect net.
 	return
 }
 
-func (s *DataNode) handlePacketToReadTinyDeleteRecordFile(p *repl.Packet, connect *net.TCPConn) {
+func (s *DataNode) handlePacketToReadTinyDeleteRecordFile(p *repl.Packet, connect net.Conn) {
 	var (
 		err error
 	)
@@ -979,7 +979,7 @@ func (s *DataNode) handlePacketToDataPartitionTryToLeaderrr(p *repl.Packet) {
 
 func (s *DataNode) forwardToRaftLeader(dp *DataPartition, p *repl.Packet) (ok bool, err error) {
 	var (
-		conn       *net.TCPConn
+		conn       net.Conn
 		leaderAddr string
 	)
 

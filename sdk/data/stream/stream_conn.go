@@ -16,12 +16,12 @@ package stream
 
 import (
 	"fmt"
+	"github.com/chubaofs/chubaofs/util"
 	"net"
 	"sync/atomic"
 	"time"
 
 	"github.com/chubaofs/chubaofs/sdk/data/wrapper"
-	"github.com/chubaofs/chubaofs/util"
 	"github.com/chubaofs/chubaofs/util/errors"
 	"github.com/chubaofs/chubaofs/util/log"
 )
@@ -35,7 +35,7 @@ const (
 	StreamSendSleepInterval = 100 * time.Millisecond
 )
 
-type GetReplyFunc func(conn *net.TCPConn) (err error, again bool)
+type GetReplyFunc func(conn net.Conn) (err error, again bool)
 
 // StreamConn defines the struct of the stream connection.
 type StreamConn struct {
@@ -132,7 +132,7 @@ func (sc *StreamConn) sendToPartition(req *Packet, getReply GetReplyFunc) (err e
 	return errors.New(fmt.Sprintf("sendToPatition Failed: sc(%v) reqPacket(%v)", sc, req))
 }
 
-func (sc *StreamConn) sendToConn(conn *net.TCPConn, req *Packet, getReply GetReplyFunc) (err error) {
+func (sc *StreamConn) sendToConn(conn net.Conn, req *Packet, getReply GetReplyFunc) (err error) {
 	for i := 0; i < StreamSendMaxRetry; i++ {
 		log.LogDebugf("sendToConn: send to addr(%v), reqPacket(%v)", sc.currAddr, req)
 		err = req.WriteToConn(conn)

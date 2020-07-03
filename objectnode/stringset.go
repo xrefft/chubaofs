@@ -37,7 +37,7 @@ type StringSet struct {
 
 func (ss StringSet) String() string {
 	s := make([]string, 0, len(ss.values))
-	for k, _ := range ss.values {
+	for k := range ss.values {
 		s = append(s, k)
 	}
 	return "[" + strings.Join(s, ",") + "]"
@@ -108,7 +108,7 @@ func (ss *StringSet) ContainsRegex(val string) bool {
 	if ss.Contains(val) {
 		return true
 	}
-	for k, _ := range ss.values {
+	for k := range ss.values {
 		if patternMatch(k, val) {
 			return true
 		}
@@ -128,7 +128,7 @@ func (ss *StringSet) ContainsWild(val string) bool {
 }
 
 func (ss *StringSet) Intersection(set *StringSet) bool {
-	for s, _ := range ss.values {
+	for s := range ss.values {
 		if set.ContainsWild(s) {
 			return true
 		}
