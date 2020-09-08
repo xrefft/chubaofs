@@ -180,6 +180,10 @@ func (mp *metaPartition) batchDeleteExtentsByPartition(partitionDeleteExtents ma
 			occurErrors[partitionID] = perr
 			lock.Unlock()
 			wg.Done()
+			if perr!=nil {
+				log.LogWarnf("metaPartition(%v) do batchDeleteExtent " +
+					"on dataPartition(%v) error(%v)",mp.config.PartitionId,partitionID,perr)
+			}
 		}(partitionID, extents)
 	}
 	wg.Wait()
@@ -259,7 +263,8 @@ func (mp *metaPartition) deleteMarkedInodes(inoSlice []uint64) {
 			mp.freeList.Push(inode.Inode)
 		}
 	}
-	log.LogInfof("metaPartition(%v) deleteInodeCnt(%v) inodeCnt(%v)", mp.config.PartitionId, len(shouldCommit), mp.inodeTree.Len())
+	log.LogInfof("metaPartition(%v) deleteSuccessInodeCnt(%v) " +
+		"inodeCnt(%v) expectDeleteInodeCnt(%v)", mp.config.PartitionId, len(shouldCommit), mp.inodeTree.Len(),len(inoSlice))
 	for _,inode:=range shouldRePushToFreeList {
 		mp.freeList.Push(inode.Inode)
 	}
