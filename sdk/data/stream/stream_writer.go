@@ -16,12 +16,13 @@ package stream
 
 import (
 	"fmt"
-	"golang.org/x/net/context"
 	"hash/crc32"
 	"net"
 	"sync/atomic"
 	"syscall"
 	"time"
+
+	"golang.org/x/net/context"
 
 	"github.com/chubaofs/chubaofs/proto"
 	"github.com/chubaofs/chubaofs/sdk/data/wrapper"
@@ -165,7 +166,7 @@ func (s *Streamer) IssueEvictRequest() error {
 }
 
 func (s *Streamer) server() {
-	t := time.NewTicker(2 * time.Second)
+	t := time.NewTicker(2000 * time.Second)
 	defer t.Stop()
 
 	for {

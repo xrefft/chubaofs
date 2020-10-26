@@ -38,7 +38,7 @@ const (
 )
 
 const (
-	DefaultTinySizeLimit = 1 * MB // TODO explain tiny extent?
+	DefaultTinySizeLimit = 1 // TODO explain tiny extent?
 )
 
 func Min(a, b int) int {
