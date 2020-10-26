@@ -266,6 +266,8 @@ func (mp *metaPartition) deleteExtentsFromList(fileList *synclist.SyncList) {
 				log.LogWarnf("[deleteExtentsFromList] partitionId=%d, %s",
 					mp.config.PartitionId, err.Error())
 			}
+			log.LogDebugf("mp(%v) deleteExtent(%v) error(%v)",
+				mp.config.PartitionId,ek.String(),err )
 		}
 		buff.Reset()
 		buff.WriteString(fmt.Sprintf("%s %d", fileName, cursor))

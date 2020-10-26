@@ -171,6 +171,7 @@ func (mp *metaPartition) batchDeleteExtentsByPartition(partitionDeleteExtents ma
 		successDeleteExtentCnt := 0
 		inode := allInodes[i]
 		inode.Extents.Range(func(ek proto.ExtentKey) bool {
+			log.LogDebugf("mp(%v) deleteExtent(%v) error(%v)",mp.config.PartitionId,ek.String(),occurErrors[ek.PartitionId] )
 			if occurErrors[ek.PartitionId] == nil {
 				successDeleteExtentCnt++
 				return true
