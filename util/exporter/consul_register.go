@@ -37,12 +37,12 @@ const (
  * optional for user when set prometheus exporter
  */
 type ConsulRegisterInfo struct {
-	Name    string   `json:"Name"`
-	ID      string   `json:"ID"`
-	Address string   `json:"Address"`
-	Port    int64    `json:"Port"`
-	Tags    []string `json:"Tags"`
-	Meta 	map[string]string `json:",omitempty"`
+	Name    string            `json:"Name"`
+	ID      string            `json:"ID"`
+	Address string            `json:"Address"`
+	Port    int64             `json:"Port"`
+	Tags    []string          `json:"Tags"`
+	Meta    map[string]string `json:",omitempty"`
 }
 
 // get consul id
@@ -134,6 +134,7 @@ func makeRegisterReq(host, addr, app, role, cluster, meta string, port int64) (r
 	ok, metas := parseMetaStr(meta)
 	if ok {
 		cInfo.Meta = metas
+		cInfo.Meta["cluster"] = cluster
 	}
 
 	cInfoBytes, err := json.Marshal(cInfo)
