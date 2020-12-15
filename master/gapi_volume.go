@@ -110,7 +110,7 @@ func (s *VolumeService) registerMutation(schema *schemabuilder.Schema) {
 	mutation := schema.Mutation()
 
 	mutation.FieldFunc("createVolume", s.createVolume)
-	mutation.FieldFunc("deleteVolume", s.markDeleteVol)
+	// mutation.FieldFunc("deleteVolume", s.markDeleteVol)
 	mutation.FieldFunc("updateVolume", s.updateVolume)
 
 }
