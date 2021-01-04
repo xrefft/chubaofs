@@ -310,10 +310,26 @@ func (p Permission) MatchSubdir(subdir string) bool {
 		}
 	}
 
-	toCompare := strings.Split(s, ":")
-	for i := 0; i < len(toCompare); i++ {
-		if (subdir == "" || subdir == "/") && (toCompare[i] == "" || toCompare[i] == "/") ||
-			subdir == toCompare[i] {
+	pars := strings.Split(s, ":")
+	toCmp := pars[0]
+	if toCmp == "/" || toCmp == "" {
+		return true
+	}
+	if !strings.HasPrefix(toCmp, "/") {
+		toCmp = "/" + toCmp
+	}
+	if strings.HasSuffix(toCmp, "/") {
+		toCmp = strings.TrimSuffix(toCmp, "/")
+	}
+	if !strings.HasPrefix(subdir, "/") {
+		subdir = "/" + subdir
+	}
+	if !strings.HasSuffix(subdir, "/") {
+		subdir = subdir + "/"
+	}
+	if strings.HasPrefix(subdir, toCmp) {
+		tail := strings.TrimPrefix(subdir, toCmp)
+		if tail == "" || strings.HasPrefix(tail, "/") {
 			return true
 		}
 	}
